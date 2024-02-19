@@ -5,9 +5,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const mockUsers = [
-    {"id":1, "name":"Joseph", "LastName":"Contreras"},
-    {"id":2, "name":"Noel", "LastName":"Flawers"},
-    {"id":3, "name":"Robert", "LastName":"Smith"}
+    {"id":1, "name":"Joseph", "lastName":"Contreras"},
+    {"id":2, "name":"Noel", "lastName":"Flawers"},
+    {"id":3, "name":"Robert", "lastName":"Smith"}
 ];
 
 const mockProducts = [
@@ -23,8 +23,10 @@ app.listen( PORT, ()=>{
     console.log(`Runnig on port http://localhost:${PORT}`);
 });
 
+app.use(express.json());
+
 /**
- * METHOD GET
+ * INICIO METHOD GET REQUEST
  */
 app.get("/", (req, res)=>{
     res.status(201).send({ "msg": "Hello!"});
@@ -37,10 +39,8 @@ app.get( "/api/users/", (req, res)=>{
 app.get( '/api/products', ( req, res )=>{
     res.status(201).send( mockProducts );
 } );
-//FIN METHOD GET
-
 /**
- * ROUTE PARAMS
+ * INICIO ROUTE PARAMS
  * Recibir parametros en la ruta
  * Se puede usar varios parámetros -> Ej:  app.get( '/api/users/:id/:name', ( req, res )=>{
  */
@@ -55,10 +55,8 @@ app.get( '/api/users/:id', ( req, res )=>{
     return  (!findUser) ? res.sendStatus(404) : res.status(200).send(findUser);
     
 } );
-//FIN ROUTE PARAMS
-
 /**
- * QUERY PARAMS 
+ * INICIO QUERY PARAMS 
  * localhost:3000/productos?field=value&field2=value2
  */
 app.get( '/api/productos', (req, res)=>{    
@@ -74,6 +72,16 @@ app.get( '/api/productos', (req, res)=>{
     }
     return res.send( mockProducts );
 } );
-//FIN QUERY PARAMS
+//FIN METHOD GET REQUEST
 
 
+//INICIO METHOD POST REQUEST
+app.post( '/api/users', ( req, res )=>{
+    const newUserId = mockUsers.length+1;
+    const name = req.body.name;
+    const lastName = req.body.lastName;
+    const user = {"id":newUserId, "name":name, "lastname":lastName};
+    mockUsers.push(user);
+    return res.status(201).send(user);
+} );
+//FIN METHOD POST REQUEST
