@@ -10,6 +10,19 @@ const mockUsers = [
     {"id":3, "name":"Robert", "LastName":"Smith"}
 ];
 
+const mockProducts = [
+    {'id':11, 'name':'Walckman', 'price':7.2},
+    {'id':12, 'name':'Radio', 'price':12.2},
+    {'id':13, 'name':'Tv', 'price':25.70},
+    {'id':14, 'name':'Smartphone', 'price':50.69},
+    {'id':15, 'name':'Headsets', 'price':8.5},
+    {'id':16, 'name':'Smartwatch', 'price':10.5},
+];
+
+app.listen( PORT, ()=>{
+    console.log(`Runnig on port http://localhost:${PORT}`);
+});
+
 /**
  * METHOD GET
  */
@@ -22,17 +35,9 @@ app.get( "/api/users/", (req, res)=>{
 } );
 //GET, Create api for products
 app.get( '/api/products', ( req, res )=>{
-    res.status(201).send(
-        [
-            {'id':12, 'name':'Radio', 'price':12.2},
-            {'id':13, 'name':'Tv', 'price':25.70},
-            {'id':14, 'name':'Smartphone', 'price':50.69},
-            {'id':15, 'name':'Headsets', 'price':8.5},
-        ]        
-    );
+    res.status(201).send( mockProducts );
 } );
 //FIN METHOD GET
-
 
 /**
  * ROUTE PARAMS
@@ -52,7 +57,23 @@ app.get( '/api/users/:id', ( req, res )=>{
 } );
 //FIN ROUTE PARAMS
 
+/**
+ * QUERY PARAMS 
+ * localhost:3000/productos?field=value&field2=value2
+ */
+app.get( '/api/productos', (req, res)=>{    
+    const { 
+        query:{ field, value } 
+    } = req;
+    
+    //Si field y value tiene valores procesamos
+    if( field && value ){
+        return res.send(
+            mockProducts.filter( (product) => product[field].includes(value) )
+        );
+    }
+    return res.send( mockProducts );
+} );
+//FIN QUERY PARAMS
 
-app.listen( PORT, ()=>{
-    console.log(`Runnig on port http://localhost:${PORT}`);
-});
+
