@@ -4,19 +4,21 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-//API Rest with GET method, basic example
+const mockUsers = [
+    {"id":1, "name":"Joseph", "LastName":"Contreras"},
+    {"id":2, "name":"Noel", "LastName":"Flawers"},
+    {"id":3, "name":"Robert", "LastName":"Smith"}
+];
+
+/**
+ * METHOD GET
+ */
 app.get("/", (req, res)=>{
     res.status(201).send({ "msg": "Hello!"});
 });
 //GET Create API rest for users
 app.get( "/api/users/", (req, res)=>{
-    res.status(201).send(
-        [
-            {"id":1, "name":"Joseph", "LastName":"Contreras"},
-            {"id":2, "name":"Noel", "LastName":"Flawers"},
-            {"id":3, "name":"Robert", "LastName":"Smith"}
-        ]
-    );
+    res.status(201).send( mockUsers );
 } );
 //GET, Create api for products
 app.get( '/api/products', ( req, res )=>{
@@ -29,6 +31,27 @@ app.get( '/api/products', ( req, res )=>{
         ]        
     );
 } );
+//FIN METHOD GET
+
+
+/**
+ * ROUTE PARAMS
+ * Recibir parametros en la ruta
+ * Se puede usar varios parámetros -> Ej:  app.get( '/api/users/:id/:name', ( req, res )=>{
+ */
+app.get( '/api/users/:id', ( req, res )=>{
+    const parseId = parseInt(req.params.id);
+    //SI el id no es válido
+    if( isNaN(parseId) ){
+        return res.status(400).send({'msg':'Bad request, invalid ID'});
+    }
+    //SI el ID es válido
+    const findUser = mockUsers.find( (user)=>user.id===parseId );
+    return  (!findUser) ? res.sendStatus(404) : res.status(200).send(findUser);
+    
+} );
+//FIN ROUTE PARAMS
+
 
 app.listen( PORT, ()=>{
     console.log(`Runnig on port http://localhost:${PORT}`);
