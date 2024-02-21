@@ -85,3 +85,54 @@ app.post( '/api/users', ( req, res )=>{
     return res.status(201).send(user);
 } );
 //FIN METHOD POST REQUEST
+
+//INICIO METHOD PUT
+app.put( '/api/users/:id', ( req, res )=>{
+    const {
+        body,
+        params: {id},
+    } = req;
+    const parseId = parseInt( id );
+
+    if( isNaN(parseId) ){
+        return res.status(400).send();
+    }
+
+    const findUserIndex = mockUsers.findIndex( (user)=> user.id===parseId );
+
+    if( findUserIndex===-1 ){
+        return res.status(404).send();
+    }
+
+    mockUsers[ findUserIndex ] = { id: parseId, ...body};
+    return res.status(200).send();
+} );
+//FIN METHOD PUT
+
+//INICIO METHOD PATCH REQUEST
+app.patch( '/api/users/:id', (request, response)=>{
+    const{
+        body,
+        params: {id}
+    } = request;
+    const parseId = parseInt(id);
+    if( isNaN(parseId) ) return response.status(404).send();
+    const findUserIndex = mockUsers.findIndex( (user) => user.id===parseId );
+    if( findUserIndex === -1 ) return response.status(404).send();
+    
+    mockUsers[findUserIndex] = { ...mockUsers[findUserIndex], ...body };
+    return response.status(200).send();
+} );
+//FIN METHOD PATCH REQUEST
+
+//INICIO METHOD DELETE REQUEST
+app.delete( '/api/users/:id', ( request, response )=>{
+    const { params:{id} } = request;
+    const parseId = parseInt(id);
+    if (isNaN(parseId)) return response.status(404).send();
+    const findUserByIndex = mockUsers. findIndex( (user) => user.id===parseId );
+    if( findUserByIndex === -1 ) return response.status(404).send();
+    mockUsers.splice(findUserByIndex);
+    return response.status(200).send();
+} );
+//FIN METHOD DELETE REQUEST
