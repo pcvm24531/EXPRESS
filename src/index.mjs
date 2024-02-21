@@ -108,3 +108,19 @@ app.put( '/api/users/:id', ( req, res )=>{
     return res.status(200).send();
 } );
 //FIN METHOD PUT
+
+//INICIO METHOD PATCH REQUEST
+app.patch( '/api/users/:id', (request, response)=>{
+    const{
+        body,
+        params: {id}
+    } = request;
+    const parseId = parseInt(id);
+    if( isNaN(parseId) ) return response.status(404).send();
+    const findUserIndex = mockUsers.findIndex( (user) => user.id===parseId );
+    if( findUserIndex === -1 ) return response.status(404).send();
+    
+    mockUsers[findUserIndex] = { ...mockUsers[findUserIndex], ...body };
+    return response.status(200).send();
+} );
+//FIN METHOD PATCH REQUEST
