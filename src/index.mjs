@@ -2,6 +2,15 @@ import express from "express";
 
 const app = express();
 
+app.use(express.json());
+
+const logginMiddleware = ( request, response, next )=>{
+    console.log(`${request.method} - ${request.url}`);
+    next();
+};
+
+app.use( logginMiddleware );
+
 const PORT = process.env.PORT || 3000;
 
 const mockUsers = [
@@ -23,18 +32,24 @@ app.listen( PORT, ()=>{
     console.log(`Runnig on port http://localhost:${PORT}`);
 });
 
-app.use(express.json());
-
 /**
  * INICIO METHOD GET REQUEST
  */
 app.get("/", (req, res)=>{
-    res.status(201).send({ "msg": "Hello!"});
+        res.status(201).send({ "msg": "Hello!"});    
 });
+
+app.use( logginMiddleware, (req, res, next)=>{
+    console.log("Finish Logging...");
+    next();
+} );
+
 //GET Create API rest for users
 app.get( "/api/users/", (req, res)=>{
     res.status(201).send( mockUsers );
 } );
+
+
 //GET, Create api for products
 app.get( '/api/products', ( req, res )=>{
     res.status(201).send( mockProducts );
