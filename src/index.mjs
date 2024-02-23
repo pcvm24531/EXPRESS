@@ -1,5 +1,6 @@
 import express from "express";
-import { body, query, validationResult } from "express-validator";
+import { body, query, validationResult, checkSchema } from "express-validator";
+import { createUserValidationShema } from "./utils/validationSchemas.mjs";
 
 const app = express();
 
@@ -114,16 +115,7 @@ app.get( '/api/productos', (req, res)=>{
 //INICIO METHOD POST REQUEST
 app.post( 
     '/api/users', 
-    [
-        body('name')
-        .notEmpty().withMessage('Name cannot be empty')
-        .isLength({min:5, max:32}).withMessage('Name must be at least 5 characters with a max of 32 characters')
-        .isString().withMessage('Name must be a string'),
-        body('lastName')
-        .notEmpty().withMessage('Name cannot be empty')
-        .isLength({min:5, max:32}).withMessage('Name must be at least 5 characters with a max of 32 characters')
-        .isString().withMessage('Name must be a string')
-    ],
+    checkSchema( createUserValidationShema ),
     ( req, res, next )=>{
         const result = validationResult(req);
         console.log(result);
