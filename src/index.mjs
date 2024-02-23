@@ -1,4 +1,5 @@
 import express from "express";
+import { body, query, validationResult } from "express-validator";
 
 const app = express();
 
@@ -55,9 +56,24 @@ app.get( "/", (req, res)=>{
 
 
 //GET Create API rest for users
-app.get( "/api/users", (req, res)=>{
-    res.status(201).send( mockUsers );
-} );
+app.get( 
+    "/api/users", 
+    query('field')
+        .isString()
+        .notEmpty().withMessage('Must not be empty')
+        .isLength({ min: 3, max: 10}).withMessage('Must be at least 3-10 characters'), 
+    (req, res)=>{
+        const result = validationResult(req);
+        console.log(result);
+        const { query: { field, value } } = req;
+        if( field && value ){
+            return res.send(
+                mockUsers.filter( (user)=>user[field].includes(value) )
+            );
+        }
+        return res.status(201).send( mockUsers );
+    } 
+);
 
 
 //GET, Create api for products
@@ -96,13 +112,31 @@ app.get( '/api/productos', (req, res)=>{
 
 
 //INICIO METHOD POST REQUEST
-app.post( '/api/users', ( req, res, next )=>{
-    const { body } = req;
-    const newUser = { id:mockUsers[mockUsers.length-1].id + 1, ...body};
-    mockUsers.push(newUser);
-    return res.status(201).send(newUser);
-    next();
-} );
+app.post( 
+    '/api/users', 
+    [
+        body('name')
+        .notEmpty().withMessage('Name cannot be empty')
+        .isLength({min:5, max:32}).withMessage('Name must be at least 5 characters with a max of 32 characters')
+        .isString().withMessage('Name must be a string'),
+        body('lastName')
+        .notEmpty().withMessage('Name cannot be empty')
+        .isLength({min:5, max:32}).withMessage('Name must be at least 5 characters with a max of 32 characters')
+        .isString().withMessage('Name must be a string')
+    ],
+    ( req, res, next )=>{
+        const result = validationResult(req);
+        console.log(result);
+
+        if( !result.isEmpty() )return res.status(400).send( {"errors":result.array()} );
+
+        const { body } = req;
+        const newUser = { id:mockUsers[mockUsers.length-1].id + 1, ...body};
+        mockUsers.push(newUser);
+        return res.status(201).send(newUser);
+        next();
+    } 
+);
 //FIN METHOD POST REQUEST
 
 //INICIO METHOD PUT
