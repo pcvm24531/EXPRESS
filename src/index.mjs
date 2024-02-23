@@ -35,17 +35,15 @@ app.listen( PORT, ()=>{
 /**
  * INICIO METHOD GET REQUEST
  */
-app.get("/", (req, res)=>{
+app.get( "/", (req, res)=>{
         res.status(201).send({ "msg": "Hello!"});    
-});
+    }
+);
 
-app.use( logginMiddleware, (req, res, next)=>{
-    console.log("Finish Logging...");
-    next();
-} );
+
 
 //GET Create API rest for users
-app.get( "/api/users/", (req, res)=>{
+app.get( "/api/users", (req, res)=>{
     res.status(201).send( mockUsers );
 } );
 
@@ -89,15 +87,18 @@ app.get( '/api/productos', (req, res)=>{
 } );
 //FIN METHOD GET REQUEST
 
+app.use( logginMiddleware, (req, res, next)=>{
+    console.log("Finish Logging...");
+    next();
+} );
 
 //INICIO METHOD POST REQUEST
-app.post( '/api/users', ( req, res )=>{
-    const newUserId = mockUsers.length+1;
-    const name = req.body.name;
-    const lastName = req.body.lastName;
-    const user = {"id":newUserId, "name":name, "lastname":lastName};
-    mockUsers.push(user);
-    return res.status(201).send(user);
+app.post( '/api/users', ( req, res, next )=>{
+    const { body } = req;
+    const newUser = { id:mockUsers[mockUsers.length-1].id + 1, ...body};
+    mockUsers.push(newUser);
+    return res.status(201).send(newUser);
+    next();
 } );
 //FIN METHOD POST REQUEST
 
