@@ -1,10 +1,13 @@
 import express from "express";
 import { body, query, validationResult, checkSchema } from "express-validator";
 import { createUserValidationShema } from "./utils/validationSchemas.mjs";
+import { router } from "./routes/users.mjs";
+import { mockUsers } from "./utils/constants.mjs";
 
 const app = express();
 
 app.use(express.json());
+app.use(router);
 
 const logginMiddleware = ( request, response, next )=>{
     console.log(`${request.method} - ${request.url}`);
@@ -27,21 +30,6 @@ const resolveIndexByUserId = (req, res, next)=>{
 
 const PORT = process.env.PORT || 3000;
 
-const mockUsers = [
-    {"id":1, "name":"Joseph", "lastName":"Contreras"},
-    {"id":2, "name":"Noel", "lastName":"Flawers"},
-    {"id":3, "name":"Robert", "lastName":"Smith"}
-];
-
-const mockProducts = [
-    {'id':11, 'name':'Walckman', 'price':7.2},
-    {'id':12, 'name':'Radio', 'price':12.2},
-    {'id':13, 'name':'Tv', 'price':25.70},
-    {'id':14, 'name':'Smartphone', 'price':50.69},
-    {'id':15, 'name':'Headsets', 'price':8.5},
-    {'id':16, 'name':'Smartwatch', 'price':10.5},
-];
-
 app.listen( PORT, ()=>{
     console.log(`Runnig on port http://localhost:${PORT}`);
 });
@@ -57,12 +45,14 @@ app.get( "/", (req, res)=>{
 
 
 //GET Create API rest for users
-app.get( 
+/*app.get( 
     "/api/users", 
     query('field')
         .isString()
-        .notEmpty().withMessage('Must not be empty')
-        .isLength({ min: 3, max: 10}).withMessage('Must be at least 3-10 characters'), 
+        .notEmpty()
+        .withMessage('Must not be empty')
+        .isLength({ min: 3, max: 10})
+        .withMessage('Must be at least 3-10 characters'), 
     (req, res)=>{
         const result = validationResult(req);
         console.log(result);
@@ -74,7 +64,7 @@ app.get(
         }
         return res.status(201).send( mockUsers );
     } 
-);
+);*/
 
 
 //GET, Create api for products
